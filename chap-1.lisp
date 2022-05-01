@@ -1,11 +1,11 @@
-(defpackage chap-1
+(defpackage paip-ans
   (:documentation "1.11 Exercises Usage: Load this file then '(in-package :chap-1)'")
   (:use :cl)
   (:export #:last-name
 	   #:power
 	   #:count-atoms))
 
-(in-package :chap-1)
+(in-package :paip-ans)
 
 ;;; DATA DEFINITIONS
 
