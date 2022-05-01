@@ -2,7 +2,8 @@
   (:documentation "1.11 Exercises Usage: Load this file then '(in-package :chap-1)'")
   (:use :cl)
   (:export #:last-name
-	   #:power))
+	   #:power
+	   #:count-atoms))
 
 (in-package :chap-1)
 
@@ -23,4 +24,10 @@
 (defun power (x y)
   "Write a function to exponentiate, or raise a number X to an integer power Y.
 For example: (power 3 2) = 3^2 = 9"
-  0)
+  (expt x y))
+
+(defun count-atoms (expr)
+  "Counts the number of atoms in an expression."
+  (cond ((null expr) 0)
+	((atom expr) 1)
+	(t (1+ (count-atoms (cdr expr))))))
