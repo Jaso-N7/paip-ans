@@ -31,3 +31,9 @@ For example: (power 3 2) = 3^2 = 9"
   (cond ((null expr) 0)
 	((atom expr) 1)
 	(t (1+ (count-atoms (cdr expr))))))
+
+(defun count-anywhere (item expr)
+  "Counts the number of times an expression ITEM occurs anywhere within another
+expression EXPR.
+Example: (count-anywhere 'a '(a ((a) b) a)) => 3"
+  0)
