@@ -4,7 +4,9 @@
   (:export #:last-name
 	   #:power
 	   #:count-atoms
-	   #:count-anywhere))
+	   #:count-anywhere
+	   #:dot-product
+	   *suffixes*))
 
 (in-package :paip-ans)
 
@@ -18,9 +20,10 @@
 
 (defun last-name (name)
   "Returns a surname, ignoring titles"
-  (if (member (car (last name)) *suffixes*)
-      (last-name (butlast name))
-      (car (last name))))
+  (cond ((null name) nil)
+	((member (car (last name)) *suffixes*)
+	 (last-name (butlast name)))
+	(t (car (last name)))))
 
 (defun power (x y)
   "Write a function to exponentiate, or raise a number X to an integer power Y.
@@ -44,3 +47,8 @@ Example: (count-anywhere 'a '(a ((a) b) a)) => 3"
 	((eql item (car expr))
 	 (+ 1 (count-anywhere item (cdr expr))))
 	(t (+ 0 (count-anywhere item (cdr expr))))))
+
+(defun dot-product (ms ns)
+  "Computes the dot product of two sequences of numbers, represented as lists.
+Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
+  0)
