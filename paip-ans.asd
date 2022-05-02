@@ -1,8 +1,10 @@
 (defsystem "paip-ans"
-  :version "1.5.0"
+  :version "1.5.1"
   :author "Jason S. Robinson"
   :depends-on ()
-  :components ((:file "chap-1"))
+  :components ((:file "models")
+	       (:file "chap-1"
+		:depends-on ("models")))
   :description "My personal answers to the PAIP Exercises"
   :in-order-to ((test-op (test-op "paip-ans/tests"))))
 
@@ -13,7 +15,8 @@
  :components ((:module "tests"
 		:components
 		((:file "generators")
-		 (:file "chap-1-tests")
+		 (:file "c1-unit")
+		 (:file "c1-prop")
 		 (:file "suite"))))
   :description "Test system for PAIP-ANS"
   :perform (test-op (op c)

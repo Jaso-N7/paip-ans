@@ -1,6 +1,9 @@
-(defpackage paip-ans
+(defpackage paip-ans/c1
   (:documentation "1.11 Exercises Usage: Load this file then '(in-package :chap-1)'")
   (:use :cl)
+  (:import-from :paip-ans/models
+		#:get-suffixes
+		#:set-suffix)
   (:export #:last-name
 	   #:power
 	   #:count-atoms
@@ -8,20 +11,17 @@
 	   #:dot-product
 	   *suffixes*))
 
-(in-package :paip-ans)
+(in-package :paip-ans/c1)
 
 ;;; DATA DEFINITIONS
 
-(defparameter *suffixes*
-  '(MD. MD JR. JR SR. SR G.P. GP. GP PhD)
-  "Types of Suffixes that may appear at the end of persons names")
 
 ;;; FUNCTION DEFINITIONS 
 
 (defun last-name (name)
   "Returns a surname, ignoring titles"
   (cond ((null name) nil)
-	((member (car (last name)) *suffixes*)
+	((member (car (last name)) (get-suffixes))
 	 (last-name (butlast name)))
 	(t (car (last name)))))
 
@@ -51,4 +51,4 @@ Example: (count-anywhere 'a '(a ((a) b) a)) => 3"
 (defun dot-product (ms ns)
   "Computes the dot product of two sequences of numbers, represented as lists.
 Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
-  0)
+  (apply #'+ (mapcar #'* ms ns)))
