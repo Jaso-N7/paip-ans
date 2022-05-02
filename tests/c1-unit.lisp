@@ -1,15 +1,9 @@
-(defpackage paip-ans/tests.chap-1
-  (:documentation "Property-Based and Unit Tests for Chapter 1.11 Exercises.")
-  (:use :cl :cl-quickcheck :paip-ans)
-  (:import-from :paip-ans/tests.generators
-		#:english-name)
-  (:export #:c1-examples
-	   #:c1-pbts))
+(defpackage paip-ans/tests.unit
+  (:documentation "All Unit Tests")
+  (:use :cl :cl-quickcheck)
+  (:export #:c1-examples))
 
-(in-package :paip-ans/tests.chap-1)
-
-;;; DATA DEFINITIONS
-
+(in-package :paip-ans/tests.unit)
 
 ;;; UNIT / EXAMPLES
 
@@ -41,12 +35,3 @@ occurs anywhere within another expression."
     (is= 3 (count-anywhere 'a '(a ((a) b) a))))
   (named "Unit 1.5: Dot product calculations are accurate"
     (is= 110 (dot-product '(10 20) '(3 4)))))
-
-;;; PROPERTIES
-
-(defun c1-pbts ()
-  nil)
-
-;;; HELPERS
-
-

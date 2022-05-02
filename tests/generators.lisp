@@ -16,25 +16,20 @@
 
 ;;; DATA DEFINITIONS
 
-(defparameter *textdata*
-  (concatenate 'string
-	       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	       "-'")
-  "Contains all the valid characters that makes up (an anglican?) name")
+(defparameter *namedata*
+  '(adrian brian charlie dean erik)
+  "Symbols to represent a name")
 
 ;;; GENERATORS
 
 (define (english-name)
   "Used to generate a name without suffixes"
-  (generate (a-name *textdata*)))
+  (generate (a-name *namedata*)))
 
 ;; Should I use STRING-CAPITALIZE, or prepend a capital letter?
-(defun a-name (sample-text)
+(defun a-name (sample-symbols)
   (lambda ()
-    (let* ((limit (length sample-text))
-	   (to-string (make-string (random limit)
-				   :initial-element #\SPACE))
-	   (string-lim (length to-string)))
-      (dotimes (i string-lim to-string)
-	(setf (char to-string i)
-	      (char sample-text (random limit)))))))
+    (let ((limit (random (length *namedata*)))
+	  (new-name))
+      (dotimes (i limit new-name)
+	(push (nth i *namedata*) new-name)))))
