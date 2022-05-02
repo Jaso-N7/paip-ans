@@ -1,6 +1,6 @@
 (defpackage paip-ans/tests.chap-1
   (:documentation "Property-Based and Unit Tests for Chapter 1.11 Exercises.")
-  (:use :cl :cl-quickcheck)
+  (:use :cl :cl-quickcheck :paip-ans)
   (:import-from :paip-ans/tests.generators
 		#:english-name)
   (:export #:c1-examples

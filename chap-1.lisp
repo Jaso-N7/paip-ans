@@ -3,7 +3,8 @@
   (:use :cl)
   (:export #:last-name
 	   #:power
-	   #:count-atoms))
+	   #:count-atoms
+	   #:count-anywhere))
 
 (in-package :paip-ans)
 
@@ -36,4 +37,10 @@ For example: (power 3 2) = 3^2 = 9"
   "Counts the number of times an expression ITEM occurs anywhere within another
 expression EXPR.
 Example: (count-anywhere 'a '(a ((a) b) a)) => 3"
-  0)
+  (cond ((null expr) 0)
+	((consp (car expr))
+	 (+ (count-anywhere item (car expr))
+	    (count-anywhere item (cdr expr))))
+	((eql item (car expr))
+	 (+ 1 (count-anywhere item (cdr expr))))
+	(t (+ 0 (count-anywhere item (cdr expr))))))
