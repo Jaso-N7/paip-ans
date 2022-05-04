@@ -72,6 +72,9 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 ;; 	   (ptester:test 1 1))
 (defun c1-examples ()
   "Example-Based testing for section 1.11"
+  (terpri)
+  (format t "~&>>> REGRESSION & EXAMPLE TESTING... <<<~%")
+  (terpri)
   (with-tests (:name "Unit 1.1: Returns surname regardless if suffixed or not")
     (test 'MORGAN (last-name '(rex morgan md)))
     (test 'DOWNEY (last-name '(morton downey jr.)))
@@ -138,7 +141,9 @@ occurs anywhere within another expression.")
 ;;; PROPERTIES
 
 (defun c1-pbts ()
-  
+  (terpri)
+  (format t "~&>>> TESTING PROPERTIES... <<<~%")
+  (terpri)
   (with-tests (:name "PBT 1.1 Gets the last name unconditionally.")
     (check-it (generator (latin-name
 			  (lambda (names add-suffix-p)
