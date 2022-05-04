@@ -108,6 +108,15 @@ occurs anywhere within another expression.")
 
 ;;; DATA DEFINITIONS
 
+(eval-when (:execute :compile-toplevel :load-toplevel)
+  (defmacro one-of (&rest exprs)
+    "Courtesy of Paul Graham's ANSI CL - Macros pg 170."
+    `(case (random ,(length exprs))
+       ,@(let ((key -1))
+	   (mapcar #'(lambda (expr)
+		       `(,(incf key) ,expr))
+		   exprs)))))
+
 (defparameter *namedata*
   '(adrian brian charlie dean erik)
   "Symbols to represent a name")
@@ -115,45 +124,39 @@ occurs anywhere within another expression.")
 ;;; GENERATORS
 
 ;; Used to generate a name with titles / suffixes.
-(def-generator titled-latin-name ()
-  (generator (a-name *namedata* t)))
-
-;; Used to generate a name without suffixes
-(def-generator untitled-latin-name ()
-  (generator (a-name *namedata* nil)))
 
 ;;   "Randomly generates a valid name"
-(def-generator latin-name ()
-  (or (generator titled-latin-name)
-      (generator untitled-latin-name)))
+(def-generator latin-name (maker sample)
+  (generator (funcall maker sample (one-of t nil))))
 
-;; Should I use STRING-CAPITALIZE, or prepend a capital letter?
-(defun a-name (sample-names suffixp)
-  (lambda ()
-    (let ((limit (random (length sample-names)))
-	  (new-name))
-      (dotimes (i limit)
-	(push (nth (random (1+ i)) sample-names) new-name))
-      (if suffixp
-	  (add-title new-name)
-	  new-name))))
+;; !!! Should I use STRING-CAPITALIZE, or prepend a capital letter?
 
 (defun add-title (name)
   (let ((limit (length (get-suffixes))))
-    (append name (nth (random limit) (get-suffixes)))))
+    (append name (list (nth (random limit) (get-suffixes))))))
 
 ;;; PROPERTIES
 
 (defun c1-pbts ()
-  (with-tests (:name "PBT 1.1 Gets the last name, whether or not there is a title.")
-      (check-it (generator (latin-name))
-		(lambda (x)
-		  (test (last-name x)
-			(funcall #'(lambda (n)
-				     (if (titlep n)
-					 (cadr (reverse n))
-					 (car (reverse n))))
-				 x))))))
+  
+  (with-tests (:name "PBT 1.1 Gets the last name unconditionally.")
+    (check-it (generator (latin-name
+			  (lambda (names add-suffix-p)
+			    (let ((limit (random (length names)))
+				  (new-name))
+			      (dotimes (i limit)
+				(push (nth (random (1+ i)) names) new-name))
+			      (if add-suffix-p
+				  (add-title new-name)
+				  new-name)))
+			  *namedata*))
+	      (lambda (x)
+		(test (last-name x)
+		      (funcall #'(lambda (n)
+				   (if (titlep n)
+				       (cadr (reverse n))
+				       (car (reverse n))))
+			       x))))))
 
 ;;; HELPERS
 
@@ -164,5 +167,5 @@ Returns T if it does; Otherwise NIL"
 
 ;;; RUN
 
-(c1-examples)
-;; (c1-pbts)
+;; (c1-examples)
+(c1-pbts)
