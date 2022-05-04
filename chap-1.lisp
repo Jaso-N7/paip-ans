@@ -118,7 +118,7 @@ occurs anywhere within another expression.")
 		   exprs)))))
 
 (defparameter *namedata*
-  '(adrian brian charlie dean erik)
+  '(adrian brian charlie derek erik frederick)
   "Symbols to represent a name")
 
 ;;; GENERATORS
