@@ -32,10 +32,15 @@
 	 (last-name (butlast name)))
 	(t (car (last name)))))
 
-(defun power (x y)
-  "Write a function to exponentiate, or raise a number X to an integer power Y.
+(defun power (base n)
+  "Write a function to exponentiate, B raised to the power of N.
 For example: (power 3 2) = 3^2 = 9"
-  (expt x y))
+  (let ((b (abs base)))
+    (cond ((= n 1) b)
+	  ((zerop n) 1)
+	  ((and (minusp n) (plusp b))
+	   1 / (power b (abs n)))
+	  (t  (* b (power b (1- n)))))))
 
 (defun count-atoms (expr)
   "Counts the number of atoms in an expression."
@@ -82,7 +87,10 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
     (test 'WILSON (last-name '(Tom Wilson))))
 
   (with-tests (:name "Unit 1.2: Test for exponentiation.")
-    (test 9 (power 3 2)))
+    (test 9 (power 3 2))
+    (test 1 (power 3 0))
+    (test 1 (power 0 0))
+    (test 1/9 (power 3 -2)))
 
   (with-tests (:name "Unit 1.3: Counting number of atoms in an expression.")
     (test 0 (count-atoms '()))
@@ -162,7 +170,13 @@ occurs anywhere within another expression.")
 				   (if (titlep n)
 				       (cadr (reverse n))
 				       (car (reverse n))))
-			       fullname))))))
+			       fullname)))))
+
+  (with-tests (:name "PBT 1.2 Calculate base raised to the power of n")
+    (check-it (generator (tuple (integer) (integer)))
+	      (lambda (a-tuple)
+		(test (power (car a-tuple) (cadr a-tuple))
+		      (expt (car a-tuple) (cadr a-tuple)))))))
 
 ;;; HELPERS
 
