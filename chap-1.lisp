@@ -68,7 +68,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 
 ;;; TESTS
 
-;; (ptester:with-tests (:name "Grok")
+;; > (ptester:with-tests (:name "Grok")
 ;; 	   (ptester:test 1 1))
 (defun c1-examples ()
   "Example-Based testing for section 1.11"
@@ -101,14 +101,10 @@ occurs anywhere within another expression.")
   (with-tests (:name "Unit 1.5: Dot product calculations are accurate")
     (test 110 (dot-product '(10 20) '(3 4)))))
 
-(eval-when (:execute :compile-toplevel :load-toplevel)
-  (defmacro one-of (&rest exprs)
-    "Courtesy of Paul Graham's ANSI CL - Macros pg 170."
-    `(case (random ,(length exprs))
-       ,@(let ((key -1))
-	   (mapcar #'(lambda (expr)
-		       `(,(incf key) ,expr))
-		   exprs)))))
+;; -----------------------------------------------------------------------------
+
+(progn  (ql:quickload :check-it)
+	(use-package :check-it))
 
 ;;; DATA DEFINITIONS
 
@@ -118,53 +114,55 @@ occurs anywhere within another expression.")
 
 ;;; GENERATORS
 
-;; (define (titled-latin-name)
-;;   "Used to generate a name with titles / suffixes."
-;;   (generate (a-name *cl-quickcheck:namedata* t)))
+;; Used to generate a name with titles / suffixes.
+(def-generator titled-latin-name ()
+  (generator (a-name *namedata* t)))
 
-;; (define (untitled-latin-name)
-;;   "Used to generate a name without suffixes"
-;;   (generate (a-name *cl-quickcheck:namedata* nil)))
+;; Used to generate a name without suffixes
+(def-generator untitled-latin-name ()
+  (generator (a-name *namedata* nil)))
 
-;; (define (latin-name)
 ;;   "Randomly generates a valid name"
-;;   (one-of (generate titled-latin-name)
-;; 	  (generate untitled-latin-name)))
+(def-generator latin-name ()
+  (or (generator titled-latin-name)
+      (generator untitled-latin-name)))
 
 ;; Should I use STRING-CAPITALIZE, or prepend a capital letter?
-;; (defun a-name (sample-names suffixp)
-;;   (lambda ()
-;;     (let ((limit (random (length sample-names)))
-;; 	  (new-name))
-;;       (dotimes (i limit)
-;; 	(push (nth (random (1+ i)) sample-names) new-name))
-;;       (if suffixp
-;; 	  (add-title new-name)
-;; 	  new-name))))
+(defun a-name (sample-names suffixp)
+  (lambda ()
+    (let ((limit (random (length sample-names)))
+	  (new-name))
+      (dotimes (i limit)
+	(push (nth (random (1+ i)) sample-names) new-name))
+      (if suffixp
+	  (add-title new-name)
+	  new-name))))
 
-;; (defun add-title (name)
-;;   (let ((limit (length (get-suffixes))))
-;;     (append name (nth (random limit) (get-suffixes)))))
+(defun add-title (name)
+  (let ((limit (length (get-suffixes))))
+    (append name (nth (random limit) (get-suffixes)))))
 
 ;;; PROPERTIES
 
-;; (defun c1-pbts ()
-;;   (cl-quickcheck:named "PBT 1.1 Gets the last name, whether or not there is a title."
-;;     (for-all ((name latin-name))
-;;       (test (last-name name)
-;; 	   (funcall #'(lambda (n)
-;; 			(if (titlep n)
-;; 			    (cadr (reverse n))
-;; 			    (car (reverse n))))
-;; 		    name)))))
+(defun c1-pbts ()
+  (with-tests (:name "PBT 1.1 Gets the last name, whether or not there is a title.")
+      (check-it (generator (latin-name))
+		(lambda (x)
+		  (test (last-name x)
+			(funcall #'(lambda (n)
+				     (if (titlep n)
+					 (cadr (reverse n))
+					 (car (reverse n))))
+				 x))))))
 
 ;;; HELPERS
 
-;; (defun titlep (name)
-;;   "Confirms if the name is suffixed with a title.
-;; Returns T if it does; Otherwise NIL"
-;;   (member (car (reverse name)) paip-ans/tests.generators::*titles*))
+(defun titlep (name)
+  "Confirms if the name is suffixed with a title.
+Returns T if it does; Otherwise NIL"
+  (member (car (reverse name)) (get-suffixes)))
+
+;;; RUN
 
 (c1-examples)
-
-
+;; (c1-pbts)
