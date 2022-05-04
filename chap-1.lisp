@@ -123,14 +123,13 @@ occurs anywhere within another expression.")
 
 ;;; GENERATORS
 
-;; Used to generate a name with titles / suffixes.
-
+;; Used to generate a name with or without titles / suffixes.
 ;;   "Randomly generates a valid name"
 (def-generator latin-name (maker sample)
   (generator (or (funcall maker sample (one-of t nil))
 		 (latin-name maker sample))))
 
-;; !!! Should I use STRING-CAPITALIZE, or prepend a capital letter?
+;;; GENERATORS --- Helpers
 
 (defun add-title (name)
   (let ((limit (length (get-suffixes))))
@@ -168,5 +167,5 @@ Returns T if it does; Otherwise NIL"
 
 ;;; RUN
 
-;; (c1-examples)
+(c1-examples)
 (c1-pbts)
