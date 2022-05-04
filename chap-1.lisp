@@ -173,7 +173,7 @@ occurs anywhere within another expression.")
 			       fullname)))))
 
   (with-tests (:name "PBT 1.2 Calculate base raised to the power of n")
-    (check-it (generator (tuple (integer) (integer)))
+    (check-it (generator (tuple (integer 0) (integer)))
 	      (lambda (a-tuple)
 		(test (power (car a-tuple) (cadr a-tuple))
 		      (expt (car a-tuple) (cadr a-tuple)))))))
