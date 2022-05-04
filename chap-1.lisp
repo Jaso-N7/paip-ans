@@ -35,11 +35,12 @@
 (defun power (base n)
   "Write a function to exponentiate, B raised to the power of N.
 For example: (power 3 2) = 3^2 = 9"
+  (declare (notinline power))
   (let ((b (abs base)))
     (cond ((= n 1) b)
 	  ((zerop n) 1)
-	  ((minusp n)
-	   1 / (power b (abs n)))
+	  ((and (minusp n) (>= b 0))
+	   (/ 1 (power b (abs n))))
 	  (t  (* b (power b (1- n)))))))
 
 (defun count-atoms (expr)
@@ -90,6 +91,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
     (test 9 (power 3 2))
     (test 1 (power 3 0))
     (test 1 (power 0 0))
+    (test-error (power 0 -1) :known-failure t :fail-info "Division by zero")
     (test 1/9 (power 3 -2)))
 
   (with-tests (:name "Unit 1.3: Counting number of atoms in an expression.")
