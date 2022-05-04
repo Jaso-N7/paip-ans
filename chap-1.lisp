@@ -150,13 +150,13 @@ occurs anywhere within another expression.")
 				  (add-title new-name)
 				  new-name)))
 			  *namedata*))
-	      (lambda (x)
-		(test (last-name x)
+	      (lambda (fullname)
+		(test (last-name fullname)
 		      (funcall #'(lambda (n)
 				   (if (titlep n)
 				       (cadr (reverse n))
 				       (car (reverse n))))
-			       x))))))
+			       fullname))))))
 
 ;;; HELPERS
 
