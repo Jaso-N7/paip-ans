@@ -38,7 +38,7 @@ For example: (power 3 2) = 3^2 = 9"
   (let ((b (abs base)))
     (cond ((= n 1) b)
 	  ((zerop n) 1)
-	  ((and (minusp n) (plusp b))
+	  ((minusp n)
 	   1 / (power b (abs n)))
 	  (t  (* b (power b (1- n)))))))
 
