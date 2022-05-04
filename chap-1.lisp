@@ -178,6 +178,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 				       (cadr (reverse n))
 				       (car (reverse n))))
 			       fullname)))))
+  (terpri)
 
   ;; (with-tests (:name "PBT 1.2 (Generalizing) Picks the surname.")
   ;;   (check-it (generator (tuple ()))))
@@ -185,8 +186,15 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   (with-tests (:name "PBT 1.2 (Modeling) Calculate base raised to the power of n")
     (check-it (generator (tuple (integer 0) (integer)))
 	      (lambda (a-tuple)
-		(test (power (car a-tuple) (cadr a-tuple))
-		      (expt (car a-tuple) (cadr a-tuple)))))))
+		(let ((b (car a-tuple))
+		      (e (cadr a-tuple)))
+		  (if (and (zerop b) (minusp e))
+		      (test-error (power b e)
+				  :condition-type 'condition
+				  :include-subtypes t)
+		      (test (power b e)
+			    (expt b e)))))))
+  (terpri))
 
 ;;; HELPERS
 
