@@ -174,7 +174,10 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 		  suffixp)))
 
 ;; Used for generating a list containing mixed symbols such as
-;; '(a b 1 2 nil #\a #\b "one" "two")
+;; > (generate (generator (mixed *elements*)))
+;; > (7.0E-8 } "l" 2 7 1 5 "m" $ "i" B -1 5 5.0E-6 -6 5 5.0E-6 { 4 5 8 -6 1 6 -3
+;; 7.0E-8 #\b G D -9 F #\c D % 9 -1 3 COMMON #\f "j" COMMON 1 0 #\d 5.0E-6 7 #\g
+;; #\a -5 -2 "h" F "k" #\a -8)
 (def-generator mixed (seed)
   (generator (map (lambda (s)
 		    (let ((lim (random (length s)))
