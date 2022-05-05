@@ -159,7 +159,10 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   (terpri)
   (format t "~&>>> TESTING PROPERTIES... <<<~%")
   (terpri)
-  (with-tests (:name "PBT 1.1 (Modeling) Gets the last name unconditionally.")
+  ;; -- Modeling -- Test the real implementation against an indirect
+  ;; (and simple) implementation.
+  (with-tests (:name "LAST-NAME Gets the last name unconditionally.")
+    ;; Generates a list representing a full name, with or without a suffix
     (check-it (generator (latin-name
 			  (lambda (names add-suffix-p)
 			    (let ((limit (random (length names)))
@@ -180,10 +183,53 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 			       fullname)))))
   (terpri)
 
-  ;; (with-tests (:name "PBT 1.2 (Generalizing) Picks the surname.")
-  ;;   (check-it (generator (tuple ()))))
+  ;; -- Generalizing -- Abstracting away Examples
+  (with-tests (:name "LAST-NAME Only returns the surname.")
+    (check-it (generator (tuple
+			  ;; Generate a list representing a random full name
+			  ;; and ensure no empty names are returned 
+			  (guard (lambda (n) (not (null n)))
+				 (generator (latin-name
+					     (lambda (names suffixp)
+					       (declare (ignore suffixp))
+					       (let ((limit (random (length names)))
+						     (new-name))
+						 (dotimes (i limit new-name)
+						   (push (nth (random limit) names)
+							 new-name))))
+					     *namedata*)))
+			  ;; Pick a random name from the data as a sure name
+			  (nth (random (length *namedata*)) *namedata*)))
+	      (lambda (known)
+		;; Compares the result of LAST-NAME to ensure it returns
+		;; the known surname
+		(let* ((known-surname (cdr known))
+		       (known-fullname (append (car known) known-surname)))
+		  (test (car known-surname) (last-name known-fullname))))))
+  (terpri)
 
-  (with-tests (:name "PBT 1.2 (Modeling) Calculate base raised to the power of n")
+  ;; -- Invariants --
+  (with-tests (:name "LAST-NAME A person should not have more than one surname")
+    (check-it (generator (latin-name
+			  (lambda (names add-suffix-p)
+			    (let ((limit (random (length names)))
+				  (new-name))
+			      (dotimes (i limit)
+				(push (nth (random limit) names) new-name))
+			      (if add-suffix-p
+				  (add-title new-name)
+				  new-name)))
+			  *namedata*))
+	      (lambda (fullname)
+		(test 1 (length (list (last-name fullname)))))))
+  (terpri)
+
+  ;; ??? How to test that LAST-NAME does not add new elements / information?
+
+  ;; ??? How to test that LAST-NAME is not destructive / removes the last name
+
+  ;; -- Modeling --
+  (with-tests (:name "POWER Calculate positive base raised to the power of n")
     (check-it (generator (tuple (integer 0) (integer)))
 	      (lambda (a-tuple)
 		(let ((b (car a-tuple))
