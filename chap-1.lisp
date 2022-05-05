@@ -155,6 +155,12 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 
 ;; Used to generate a name with or without titles / suffixes.
 ;;   "Randomly generates a valid name"
+;; Test examples:
+;; > (generate (generator (latin-name *namedata*)))
+;; > (BRIAN BRIAN G.P.) ; May or may not have a title
+;; or
+;; > (generate (generator (latin-name *namedata* nil)))
+;; > (ADRIAN) ; Will never have a title
 (def-generator latin-name (sample &optional (suffixp (one-of t nil)))
   (generator (map (lambda (names add-suffix-p)
 		    (let ((limit (random (length names)))
