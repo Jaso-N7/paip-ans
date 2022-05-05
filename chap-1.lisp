@@ -245,6 +245,22 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 			    (expt b e)))))))
   (terpri)
 
+  ;; -- Invariance --
+  (with-tests (:name "POWER only returns either an INTEGER or a REAL")
+    (let ((*num-trials* 100))
+      (check-it (generator (tuple (integer 0) (integer)))
+		(lambda (a-tuple)
+		  (let ((b (car a-tuple))
+			(e (cadr a-tuple)))
+		    (if (and (zerop b) (minusp e))
+			(test-error (power b e)
+				    :condition-type 'condition
+				    :include-subtypes t)
+			(let ((ans (power b e)))
+			  (or (integerp ans)
+			      (realp ans)))))))))
+  (terpri)
+
   ;; -- Identities --
   (with-tests (:name "POWER Identity B^m+n = B^m . B^n , provided base is non-zero")
     (check-it (generator (tuple
