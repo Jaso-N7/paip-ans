@@ -142,6 +142,15 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   '(adrian brian charlie derek erik frederick)
   "Symbols to represent a name")
 
+(defparameter *elements*
+  (append '(-9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9 a b c d e f g)
+	  '(#\a #\b #\c #\d #\e #\f #\g)
+	  '("h" "i" "j" "k" "l" "m" "n" "o")
+	  '(common lisp is such pureness)
+	  '(1e-2 3e-4 5e-6 7e-8)
+	  '($ ~ % { } [ nil ] ! + * ))
+  "Mainly used for the generating of mixed lists")
+
 ;;; GENERATORS
 
 ;; Used to generate a name with or without titles / suffixes.
@@ -150,11 +159,23 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   (generator (or (funcall maker sample (one-of t nil))
 		 (latin-name maker sample))))
 
+;; Used for generating a list containing mixed symbols such as
+;; '(a b 1 2 nil #\a #\b "one" "two")
+(def-generator mixed (seed)
+  (generator (map (lambda (s)
+		    (let ((lim (random (length s)))
+			  (lst))
+		      (dotimes (i lim lst)
+			(push (nth (random lim) s) lst))))
+		  seed)))
+
 ;;; GENERATORS --- Helpers
 
 (defun add-title (name)
   (let ((limit (length (get-suffixes))))
     (append name (list (nth (random limit) (get-suffixes))))))
+
+
 
 ;;; PROPERTIES
 
@@ -302,6 +323,16 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 		  (test (power (* b c) n)
 			(* (power b n) (power c n)))))))
   (terpri)
+
+  ;; -- Modeling --
+
+  (with-tests (:name "COUNT-ATOMS returns the number of atoms in an expression")
+    (check-it (generator (mixed *elements*))
+	      (lambda (x)
+		(test (length x)
+		      (count-atoms x)))))
+  (terpri)
+  
   )
 
 ;;; HELPERS
