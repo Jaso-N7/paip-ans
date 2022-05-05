@@ -3,8 +3,11 @@
 ;; This file is meant to be loaded or compiled \(or both).
 ;; As packages were not introduced, I decided to keep it simple and stand-alone.
 ;;
-;; Tests are at the bottom of this file.
-;; 
+;; Tests are at the bottom of this file, or they can be run anytime with
+;;
+;; > (c1-examples)
+;; > (c1-pbts)
+;; > (progn (c1-examples) (c1-pbts))
 ;; 
 
 (in-package :cl-user)
@@ -187,7 +190,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   (with-tests (:name "LAST-NAME Only returns the surname.")
     (check-it (generator (tuple
 			  ;; Generate a list representing a random full name
-			  ;; and ensure no empty names are returned 
+			  ;; and ensure no empty names are returned
 			  (guard (lambda (n) (not (null n)))
 				 (generator (latin-name
 					     (lambda (names suffixp)
@@ -240,7 +243,50 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 				  :include-subtypes t)
 		      (test (power b e)
 			    (expt b e)))))))
-  (terpri))
+  (terpri)
+
+  ;; -- Identities --
+  (with-tests (:name "POWER Identity B^m+n = B^m . B^n , provided base is non-zero")
+    (check-it (generator (tuple
+			  ;; Only provide non-zero values for the base
+			  (guard (lambda (i) (or (plusp i) (minusp i))) (integer))
+			  ;; Generate M and N values
+			  (list (integer) :length 2)))
+	      (lambda (indices)
+		(let ((b (first indices))
+		      (m (first (second indices)))
+		      (n (second (second indices))))
+		  (test (power b (+ m n))
+			(* (power b m) (power b n)))))))
+  (terpri)
+  (with-tests (:name "POWER Identity (B^m)^n = B^m.n , provided base is non-zero")
+    (check-it (generator (tuple
+			  ;; Only provide non-zero values for the base
+			  (guard (lambda (i) (or (plusp i) (minusp i))) (integer))
+			  ;; Generate M and N values
+			  (list (integer) :length 2)))
+	      (lambda (indices)
+		(let ((b (first indices))
+		      (m (first (second indices)))
+		      (n (second (second indices))))
+		  (test (power (power b m) n)
+			(power b (* m n)))))))
+  (terpri)
+  (with-tests (:name "POWER Identity (B.C)^n = B^n.C^n , provided base is non-zero")
+    (check-it (generator (tuple
+			  ;; Only provide non-zero values for the bases
+			  (guard (lambda (i) (or (plusp i) (minusp i))) (integer))
+			  (guard (lambda (i) (or (plusp i) (minusp i))) (integer))
+			  ;; Generate N value
+			  (integer)))
+	      (lambda (indices)
+		(let ((b (first indices))
+		      (c (second indices))
+		      (n (third indices)))
+		  (test (power (* b c) n)
+			(* (power b n) (power c n)))))))
+  (terpri)
+  )
 
 ;;; HELPERS
 
