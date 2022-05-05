@@ -155,9 +155,17 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 
 ;; Used to generate a name with or without titles / suffixes.
 ;;   "Randomly generates a valid name"
-(def-generator latin-name (maker sample)
-  (generator (or (funcall maker sample (one-of t nil))
-		 (latin-name maker sample))))
+(def-generator latin-name (sample &optional (suffixp (one-of t nil)))
+  (generator (map (lambda (names add-suffix-p)
+		    (let ((limit (random (length names)))
+			  (new-name))
+		      (dotimes (i limit)
+			(push (nth (random limit) names) new-name))
+		      (if add-suffix-p
+			  (add-title new-name)
+			  new-name)))
+		  sample
+		  suffixp)))
 
 ;; Used for generating a list containing mixed symbols such as
 ;; '(a b 1 2 nil #\a #\b "one" "two")
@@ -187,16 +195,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   ;; (and simple) implementation.
   (with-tests (:name "LAST-NAME Gets the last name unconditionally.")
     ;; Generates a list representing a full name, with or without a suffix
-    (check-it (generator (latin-name
-			  (lambda (names add-suffix-p)
-			    (let ((limit (random (length names)))
-				  (new-name))
-			      (dotimes (i limit)
-				(push (nth (random limit) names) new-name))
-			      (if add-suffix-p
-				  (add-title new-name)
-				  new-name)))
-			  *namedata*))
+    (check-it (generator (latin-name *namedata*))
 	      (lambda (fullname)
 		(test (last-name fullname)
 		      (funcall #'(lambda (n)
@@ -213,15 +212,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 			  ;; Generate a list representing a random full name
 			  ;; and ensure no empty names are returned
 			  (guard (lambda (n) (not (null n)))
-				 (generator (latin-name
-					     (lambda (names suffixp)
-					       (declare (ignore suffixp))
-					       (let ((limit (random (length names)))
-						     (new-name))
-						 (dotimes (i limit new-name)
-						   (push (nth (random limit) names)
-							 new-name))))
-					     *namedata*)))
+				 (generator (latin-name *namedata* nil)))
 			  ;; Pick a random name from the data as a sure name
 			  (nth (random (length *namedata*)) *namedata*)))
 	      (lambda (known)
@@ -234,16 +225,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 
   ;; -- Invariants --
   (with-tests (:name "LAST-NAME A person should not have more than one surname")
-    (check-it (generator (latin-name
-			  (lambda (names add-suffix-p)
-			    (let ((limit (random (length names)))
-				  (new-name))
-			      (dotimes (i limit)
-				(push (nth (random limit) names) new-name))
-			      (if add-suffix-p
-				  (add-title new-name)
-				  new-name)))
-			  *namedata*))
+    (check-it (generator (latin-name *namedata*))
 	      (lambda (fullname)
 		(test 1 (length (list (last-name fullname)))))))
   (terpri)
@@ -331,9 +313,7 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 	      (lambda (x)
 		(test (length x)
 		      (count-atoms x)))))
-  (terpri)
-  
-  )
+  (terpri))
 
 ;;; HELPERS
 
