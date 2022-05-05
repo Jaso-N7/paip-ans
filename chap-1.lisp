@@ -103,8 +103,13 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
   (with-tests (:name "Unit 1.3: COUNT-ATOMS")
     (test 0 (count-atoms '()))
     (test 1 (count-atoms 'a))
+    (test 5 (count-atoms '(a b c #\d "e")))
+    (test 3 (count-atoms '((a) b c)))
     (test 3 (count-atoms '(a (b) c)))
-    (test 3 (count-atoms '(a () c))))
+    (test 3 (count-atoms '(a b (c))))
+    (test 3 (count-atoms '(() b c)))
+    (test 3 (count-atoms '(a () c)))
+    (test 3 (count-atoms '(a b ()))))
   (terpri)
 
   (with-tests (:name "Unit 1.4: COUNT-ANYWHERE")
@@ -115,7 +120,9 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
     (test 1 (count-anywhere 'a '(1 a 3)))
     (test 1 (count-anywhere 'a '(1 2 3 a)))
     (test 2 (count-anywhere 'a '(a b b a)))
-    (test 3 (count-anywhere 'a '(a ((a) b) a))))
+    (test 3 (count-anywhere 'a '(a ((a) b) a)))
+    (test 3 (count-atoms '(lambda () #'identity)))
+    (test 1 (count-atoms #'identity)))
   (terpri)
 
   (with-tests (:name "Unit 1.5: DOT-PRODUCT")
@@ -322,7 +329,32 @@ Example: (dot-product '(10 20) '(3 4)) = 10 x 3 + 20 x 4 = 110"
 	      (lambda (x)
 		(test (length x)
 		      (count-atoms x)))))
-  (terpri))
+  (terpri)
+
+  ;; -- Generalize --
+  (with-tests (:name "COUNT-ATOMS always returns 1 for atomic expressions")
+    (check-it (generator (or (list (integer) :length 1)
+			     (integer)
+			     (character)
+			     (string)))
+	      (lambda (x)
+		(test 1 (count-atoms x)))))
+  (terpri)
+
+  ;; -- Commutative --
+  (with-tests (:name "COUNT-ATOMS Commutative a + b = b + a")
+    (check-it (generator (tuple (mixed *elements*)
+				(mixed *namedata*)))
+	      (lambda (xs)
+		(let ((a (first xs))
+		      (b (second xs)))
+		  (test (count-atoms (append a b))
+			(count-atoms (append b a)))))))
+  (terpri)
+
+  
+
+  )
 
 ;;; HELPERS
 
