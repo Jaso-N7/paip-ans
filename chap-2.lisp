@@ -47,6 +47,10 @@
   "Return a list of the possible rewrites for this category."
   (rule-rhs (assoc category *grammar*)))
 
+(defun mappend (fn the-list)
+  "Apply fn to each element of list and append the results."
+  (apply #'append (mapcar fn the-list)))
+
 ;; Had to rename so it doesn't clash with CHECK-IT:GENERATE
 (defun generate-phrase (phrase)
   "Generate a random sentence or phrase"
