@@ -12,7 +12,7 @@
 
 (in-package :cl-user)
 
-;; PAIP DEFINITIONS -- Code from the book required for the exercises
+;;; PAIP DEFINITIONS -- Code from the book required for the exercises
 
 (defparameter *simple-grammar*
   '((sentence -> (noun-phrase verb-phrase))
@@ -27,9 +27,9 @@
   "The grammar used by generate.  Initially, this is
   *simple-grammar*, but we can switch to other grammars.")
 
-(defun one-of (set)
-  "Pick one element of set, and make a list of it."
-  (list (random-elt set)))
+;; (defun one-of (set)
+;;   "Pick one element of set, and make a list of it."
+;;   (list (random-elt set)))
 
 (defun random-elt (choices)
   "Choose an element from a list at random."
@@ -56,7 +56,7 @@
          (generate-phrase (random-elt (rewrites phrase))))
         (t (list phrase))))
 
-;; EXERCISES -- 2.1
+;;; EXERCISES -- 2.1
 
 (defun generate-english (phrase)
   "Generates a random english sentence or phrase.
@@ -71,3 +71,34 @@
 	  ((null choices)
 	   (list phrase))
 	  (t  (generate-english (random-elt choices))))))
+
+
+;;; TESTS -- Units and Property-Based
+
+(unless (find-package :ptester)
+  (ql:quickload :ptester)
+  (use-package :ptester))
+
+(defun c2-examples ()
+  "Unit tests for Chapter 2 exercises."
+  (with-tests (:name "GENERATE-ENGLISH returns exact phrase as a list")
+    (test '(word) (generate-english 'word) :test #'equal)
+    (test nil (generate-english '()))
+    (test '(the phrase) (generate-english '(the phrase)) :test #'equal)))
+
+(unless (find-package :check-it)
+  (ql:quickload :check-it)
+  (use-package :check-it))
+
+(defun c2-props ()
+  "Property-Based Tests for Chapter 2 exercises."
+
+  ;; Modeling
+  (with-tests (:name "GENERATE-ENGLISH Oracle")
+    (check-it (generator (string :min-length 2
+				 :max-length *list-size*))
+	      (lambda (s)
+		(test (generate-phrase s)
+		      (generate-english s)
+		      :test #'equal)))))
+
