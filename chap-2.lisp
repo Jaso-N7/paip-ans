@@ -88,7 +88,8 @@
   (with-tests (:name "GENERATE-ENGLISH returns exact phrase as a list")
     (test '(word) (generate-english 'word) :test #'equal)
     (test nil (generate-english '()))
-    (test '(the phrase) (generate-english '(the phrase)) :test #'equal)))
+    (test '(the phrase) (generate-english '(the phrase)) :test #'equal))
+  (terpri))
 
 (unless (find-package :check-it)
   (ql:quickload :check-it)
@@ -97,12 +98,22 @@
 (defun c2-props ()
   "Property-Based Tests for Chapter 2 exercises."
 
-  ;; Modeling
+  ;; Invariances -- Try to test for obvious correctness
+
+  ;; Postconditions -- What should be true after calling a function?
+
+  ;; Metamorphic -- How does changing the input, change its result?
+
+  ;; Inductive
+
+  ;; Model-based -- Abstract implementations to test the real
   (with-tests (:name "GENERATE-ENGLISH Oracle")
     (check-it (generator (string :min-length 2
 				 :max-length *list-size*))
 	      (lambda (s)
 		(test (generate-phrase s)
 		      (generate-english s)
-		      :test #'equal)))))
+		      :test #'equal))))
+  (terpri)
+  )
 
