@@ -9,24 +9,27 @@
 ;; 3.2 LIST* ?
 
 ;; 3.3
-
-(defun prind (a-list)
-  "Prints an expression in dotted pair notation."
-  (princ "(")
-  (labels
-      ((rec (element res)
-	 (cond ((endp res)
-		(princ element))
-	       ((null (cdr res))
-		(princ element)
-		(princ " . ")
-		(rec (first res) (cdr res)))
-	       (t (princ element)
-		  (princ " ")
-		  (rec (first res) (cdr res))))))
-    (rec (first a-list) (rest a-list)))
-  (princ ")")
-  a-list)
+;; "Prints an expression in dotted-pair notation."
+((lambda (a-list)
+	    (labels
+		((rec (el list n-paren)
+		   (cond ((null el)
+		       (princ nil)
+		       (close-parens n-paren))
+		      ((atom el)
+		       (print-atom el)
+		       (rec (first list) (rest list) (1+ n-paren)))
+		      (t (rec (first list) (rest list) (1+ n-paren)))))
+		 (print-atom (atm)
+		   (princ "(")
+		   (princ atm)
+		   (princ " . "))
+		 (close-parens (parens)
+		   (dotimes (i parens)
+		     (princ ")"))))
+	      (rec (first a-list) (rest a-list) 0))
+	    a-list)
+	  '(a b c d))
 
 ;; 3.4
 
@@ -35,6 +38,18 @@
   (if (null (cdr (last list)))
       nil
       t))
+
+(defun printd (list)
+  "Prints an expression in dotted pair notation when necessary; Normal list
+notation otherwise."
+  (if (dottedp list)
+      (prind list)
+      (progn
+	(princ "(")
+	(dolist (l list (princ ")"))
+	  (princ l)
+	  (princ " "))))
+  list)
 
 ;;; TESTS
 
