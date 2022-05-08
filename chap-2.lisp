@@ -23,6 +23,21 @@
     (Verb -> hit took saw liked))
   "A grammar for a trivial subset of English.")
 
+(defparameter *bigger-grammar*
+  '((sentence -> (noun-phrase verb-phrase))
+    (noun-phrase -> (Article Adj* Noun PP*) (Name) (Pronoun))
+    (verb-phrase -> (Verb noun-phrase PP*))
+    (PP* -> () (PP PP*))
+    (Adj* -> () (Adj Adj*))
+    (PP -> (Prep noun-phrase))
+    (Prep -> to in by with on)
+    (Adj -> big little blue green adiabatic)
+    (Article -> the a)
+    (Name -> Pat Kim Lee Terry Robin)
+    (Noun -> man ball woman table)
+    (Verb -> hit took saw liked)
+    (Pronoun -> he she it these those that)))
+
 (defvar *grammar* *simple-grammar*
   "The grammar used by generate.  Initially, this is
   *simple-grammar*, but we can switch to other grammars.")
@@ -103,6 +118,11 @@ the terminal and non-terminal."
     (test '(word) (generate-english 'word) :test #'equal)
     (test nil (generate-english '()))
     (test '(the phrase) (generate-english '(the phrase)) :test #'equal))
+  (terpri)
+  (with-tests (:name "GENERATE-GRAMMAR returns exact phrase as a list")
+    (test '(word) (generate-grammar 'word) :test #'equal)
+    (test nil (generate-grammar '()))
+    (test '(the phrase) (generate-grammar '(the phrase)) :test #'equal))
   (terpri))
 
 (unless (find-package :check-it)
@@ -132,6 +152,15 @@ the terminal and non-terminal."
 	      (lambda (s)
 		(test (generate-phrase s)
 		      (generate-english s)
+		      :test #'equal))))
+  (terpri)
+
+  (with-tests (:name "GENERATE-GRAMMAR Oracle")
+    (check-it (generator (string :min-length 2
+				 :max-length *list-size*))
+	      (lambda (s)
+		(test (generate-phrase s)
+		      (generate-grammar s)
 		      :test #'equal))))
   (terpri)
   )
