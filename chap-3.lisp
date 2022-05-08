@@ -6,30 +6,30 @@
     (* x x)))
  6)
 
-;; 3.2 LIST* ?
+;; 3.2 LIST*
 
 ;; 3.3
-;; "Prints an expression in dotted-pair notation."
-((lambda (a-list)
-	    (labels
-		((rec (el list n-paren)
-		   (cond ((null el)
-		       (princ nil)
-		       (close-parens n-paren))
-		      ((atom el)
-		       (print-atom el)
-		       (rec (first list) (rest list) (1+ n-paren)))
-		      (t (rec (first list) (rest list) (1+ n-paren)))))
-		 (print-atom (atm)
-		   (princ "(")
-		   (princ atm)
-		   (princ " . "))
-		 (close-parens (parens)
-		   (dotimes (i parens)
-		     (princ ")"))))
-	      (rec (first a-list) (rest a-list) 0))
-	    a-list)
-	  '(a b c d))
+
+(defun prind (a-list)
+  "Prints an expression in dotted-pair notation."
+  (labels
+      ((rec (el list n-paren)
+	 (cond ((null el)
+		(princ nil)
+		(close-parens n-paren))
+	       ((atom el)
+		(print-atom el)
+		(rec (first list) (rest list) (1+ n-paren)))
+	       (t (rec (first list) (rest list) (1+ n-paren)))))
+       (print-atom (atm)
+	 (princ "(")
+	 (princ atm)
+	 (princ " . "))
+       (close-parens (parens)
+	 (dotimes (i parens)
+	   (princ ")"))))
+    (rec (first a-list) (rest a-list) 0))
+  a-list)
 
 ;; 3.4
 
@@ -64,6 +64,16 @@ notation otherwise."
 		((lambda (y) (+ x y))
 		 (* x x)))
 	      6)))
+  (terpri)
+  (with-tests (:name "Prints Dotted-Pair notation")
+    (let ((sample '(a b c d)))
+      (test (princ sample) (prind sample))
+      (test (princ (cons 0 sample)) 
+	    (prind (cons 0 sample))
+	    :test #'equal)
+      (test (princ (append sample '(1 2 3))) 
+	    (prind (append sample '(1 2 3)))
+	    :test #'equal)))
   (terpri)
   (with-tests (:name "Checks for Dotted Lists")
     (test t (dottedp (cons 'a 'b)))
