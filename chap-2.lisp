@@ -60,8 +60,9 @@
          (generate-phrase (random-elt (rewrites phrase))))
         (t (list phrase))))
 
-;;; EXERCISES -- 2.1
+;;; EXERCISES
 
+;; 2.1
 (defun generate-english (phrase)
   "Generates a random english sentence or phrase.
 > (generate-english 'sentence) => (A MAN SAW THE MAN)
@@ -76,6 +77,19 @@
 	   (list phrase))
 	  (t  (generate-english (random-elt choices))))))
 
+;; 2.2 - I could not figure this one out on my own.
+(defun generate-grammar (phrase)
+  "Generates a random sentence or phrase while differentiating
+the terminal and non-terminal."
+  (cond ((listp phrase)
+	 (mappend #'generate-grammar phrase))
+	((non-terminal-p phrase)
+	 (generate-grammar (random-elt (rewrites phrase))))
+	(t  (list phrase))))
+
+(defun non-terminal-p (category)
+  "T if this is a category in the grammar."
+  (not (null (rewrites category))))
 
 ;;; TESTS -- Units and Property-Based
 
@@ -95,10 +109,15 @@
   (ql:quickload :check-it)
   (use-package :check-it))
 
+;; PROPERTIES
+
 (defun c2-props ()
   "Property-Based Tests for Chapter 2 exercises."
 
   ;; Invariances -- Try to test for obvious correctness
+
+  ;; (with-tests (:name "A valid Sentence => Noun phrase + Verb phrase")
+  ;;   ())
 
   ;; Postconditions -- What should be true after calling a function?
 
@@ -117,3 +136,31 @@
   (terpri)
   )
 
+;; GENERATORS
+
+;; HELPERS
+
+;; (defun grammar-p (sentence)
+;;   "Grammar is valid when either a noun-phrase is appended to a verb-phrase
+;; or when just a phrase is returned.
+;; Returns T if valid; Otherwise NIL
+;; Sentence => Noun-Phrase + Verb-Phrase"
+;;   (and (noun-phrase-p sentence)
+;;        (verb-phrase-p sentence)))
+
+;; (defun noun-phrase-p (noun-phrase)
+;;   "A noun phrase is valid when it is made up of an Article prepended to a Noun.
+;; Returns T; Otherwise NIL"
+;;   (let ((construct (rewrites noun-phrase)))
+;;     (dolist )))
+
+;; (defun verb-phrase-p (verb-phrase)
+;;   nil)
+
+;; -------------------------------------------
+
+(format t "~&Tests be run anytime with~%
+(c2-examples) ; All Unit Tests~%
+(c2-props)    ; Test all properties~%
+or test everything~%
+(progn (c2-examples) (c2-props))")
