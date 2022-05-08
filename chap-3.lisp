@@ -28,6 +28,14 @@
   (princ ")")
   a-list)
 
+;; 3.4
+
+(defun dottedp (list)
+  "Checks whether LIST is a Dotted List. Returns T if it is; Otherwise NIL"
+  (if (null (cdr (last list)))
+      nil
+      t))
+
 ;;; TESTS
 
 (unless (find-package :ptester)
@@ -42,6 +50,11 @@
 		 (* x x)))
 	      6)))
   (terpri)
+  (with-tests (:name "Checks for Dotted Lists")
+    (test t (dottedp (cons 'a 'b)))
+    (test t (dottedp (cons 'a (cons 'b 'c))))
+    (test nil (dottedp (cons 'a nil)))
+    (test nil (dottedp (cons 'a (cons 'b nil)))))
   )
 
 (format t "~&Tests be run anytime with~%
