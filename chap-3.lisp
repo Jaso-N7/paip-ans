@@ -10,19 +10,23 @@
 
 ;; 3.3
 
-((lambda (lis)
-   (labels
-       ((rec (l res)
-	  (cond ((endp res)
-		 (princ l))
-		((null (cdr res))
-		 (princ l)
-		 (princ ".")
-		 (rec (first res) (cdr res)))
-		(t (princ l)
-		   (rec (first res) (cdr res))))))
-     (rec (first lis) (rest lis))))
- '(a b c d c e c))
+(defun prind (a-list)
+  "Prints an expression in dotted pair notation."
+  (princ "(")
+  (labels
+      ((rec (element res)
+	 (cond ((endp res)
+		(princ element))
+	       ((null (cdr res))
+		(princ element)
+		(princ " . ")
+		(rec (first res) (cdr res)))
+	       (t (princ element)
+		  (princ " ")
+		  (rec (first res) (cdr res))))))
+    (rec (first a-list) (rest a-list)))
+  (princ ")")
+  a-list)
 
 ;;; TESTS
 
