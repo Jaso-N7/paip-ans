@@ -13,22 +13,15 @@
 (defun prind (a-list)
   "Prints an expression in dotted-pair notation."
   (labels
-      ((rec (el list n-paren)
+      ((prind-rec (el list n-paren)
 	 (cond ((null el)
 		(princ nil)
 		(close-parens n-paren))
 	       ((atom el)
-		(print-atom el)
-		(rec (first list) (rest list) (1+ n-paren)))
-	       (t (rec (first list) (rest list) (1+ n-paren)))))
-       (print-atom (atm)
-	 (princ "(")
-	 (princ atm)
-	 (princ " . "))
-       (close-parens (parens)
-	 (dotimes (i parens)
-	   (princ ")"))))
-    (rec (first a-list) (rest a-list) 0))
+		(princ-atom el)
+		(prind-rec (first list) (rest list) (1+ n-paren)))
+	       (t (prind-rec (first list) (rest list) (1+ n-paren))))))
+    (prind-rec (first a-list) (rest a-list) 0))
   a-list)
 
 ;; 3.4
@@ -43,13 +36,28 @@
   "Prints an expression in dotted pair notation when necessary; Normal list
 notation otherwise."
   (if (dottedp list)
-      (prind list)
-      (progn
-	(princ "(")
-	(dolist (l list (princ ")"))
-	  (princ l)
-	  (princ " "))))
+      (printd-aux (first list) (rest list) 0)
+      (prind list))
   list)
+
+(defun printd-aux (atom list parens)
+  "Auxilliary function for printing dotted lists in dotted-pair notation."
+  (cond ((and (atom atom))
+	 (princ atom)
+	 (close-parens parens))
+	((atom atom)
+	 (princ-atom atom)
+	 (printd-aux (first list) (rest list) (1+ parens)))
+	(t (printd-aux (first list) (rest list) (1+ parens)))))
+
+(defun princ-atom (atom)
+  "Prints the first element in a cons."
+  (princ "(") (princ atom) (princ " . "))
+
+(defun close-parens (parens)
+  "Prints the required amount of closing parenthesis."
+  (dotimes (i parens)
+    (princ ")")))
 
 ;;; TESTS
 
@@ -67,19 +75,27 @@ notation otherwise."
   (terpri)
   (with-tests (:name "Prints Dotted-Pair notation")
     (let ((sample '(a b c d)))
+      ;; (A . (B . (C . (D . NIL))))
       (test (princ sample) (prind sample))
+      ;; (0 . (A . (B . (C . (D . NIL)))))
       (test (princ (cons 0 sample)) 
 	    (prind (cons 0 sample))
 	    :test #'equal)
+      ;; (A . (B . (C . (D . (1 . (2 . (3 . NIL)))))))
       (test (princ (append sample '(1 2 3))) 
 	    (prind (append sample '(1 2 3)))
-	    :test #'equal)))
+	    :test #'equal))
+    (let ((nested '((1 2) 3)))
+      (test (princ nested) (prind nested)))
+    )
   (terpri)
   (with-tests (:name "Checks for Dotted Lists")
     (test t (dottedp (cons 'a 'b)))
     (test t (dottedp (cons 'a (cons 'b 'c))))
     (test nil (dottedp (cons 'a nil)))
-    (test nil (dottedp (cons 'a (cons 'b nil)))))
+    (test nil (dottedp (cons 'a (cons 'b nil))))
+    (test t (dottedp '((1 2) . 3)))
+    (test nil (dottedp '((1 2) 3))))
   )
 
 (format t "~&Tests be run anytime with~%
