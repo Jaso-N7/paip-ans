@@ -10,7 +10,7 @@
 
 ;; 3.3
 
-(defun prind (a-list)
+(defun prind (list)
   "Prints an expression in dotted-pair notation."
   (labels
       ((prind-rec (el list n-paren)
@@ -21,8 +21,8 @@
 		(princ-atom el)
 		(prind-rec (first list) (rest list) (1+ n-paren)))
 	       (t (prind-rec (first list) (rest list) (1+ n-paren))))))
-    (prind-rec (first a-list) (rest a-list) 0))
-  a-list)
+    (prind-rec (first list) (rest list) 0))
+  list)
 
 ;; 3.4
 
