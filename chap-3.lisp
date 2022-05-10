@@ -70,6 +70,20 @@ notation otherwise."
 ;; Without testing the code, this is my response.
 ;; (local-a local-b global-b local-a local-b) ?
 
+;; 3.9
+(defun breadth (sequence)
+  "Returns the number of elements in a sequence"
+  (if (null sequence)
+      0
+      (let ((counter 1))
+	(reduce #'(lambda (first second)
+		    (cond (first
+			   (incf counter 1))
+			  (second
+			   (incf counter 1))))
+		sequence)
+	counter)))
+
 ;;; ----------------------------------------------------------------------------
 
 ;;; TESTS
@@ -109,6 +123,14 @@ notation otherwise."
     (test nil (dottedp (cons 'a (cons 'b nil))))
     (test t (dottedp '((1 2) . 3)))
     (test nil (dottedp '((1 2) 3))))
+  (terpri)
+  (with-tests (:name "A version of LENGTH using REDUCE")
+    (test 0 (breadth nil))
+    (test 0 (breadth '()))
+    (test 1 (breadth '((#\c))))
+    (test 5 (breadth '(1 2 5 4 3)))
+    (test 5 (breadth (vector 'a 'b 'c 'd 'e)))
+    (test 4 (breadth "paip")))
   )
 
 (format t "~&Tests be run anytime with~%
