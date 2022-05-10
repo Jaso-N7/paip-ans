@@ -92,8 +92,8 @@ notation otherwise."
   (ql:quickload :ptester))
 (use-package :ptester)
 
-(defun c3-examples ()
-  "Chapter 3 Unit tests."
+(defun test-c3 ()
+  "Chapter 3 Example / Regression tests."
   (with-tests (:name "Meaning of life...")
     (test 42 ((lambda (x)
 		((lambda (y) (+ x y))
@@ -134,7 +134,7 @@ notation otherwise."
   )
 
 (format t "~&Tests be run anytime with~%
-(c3-examples) ; All Unit Tests~%
+(test-c3) ; Regression Tests~%
 (c3-props)    ; Test all properties~%
 or test everything~%
-(progn (c3-examples) (c3-props))")
+(progn (test-c3) (c3-props))")
