@@ -128,6 +128,7 @@ notation otherwise."
     (test 0 (breadth nil))
     (test 0 (breadth '()))
     (test 1 (breadth '((#\c))))
+    (test 3 (breadth '(a (b) 2)))
     (test 5 (breadth '(1 2 5 4 3)))
     (test 5 (breadth (vector 'a 'b 'c 'd 'e)))
     (test 4 (breadth "paip")))
