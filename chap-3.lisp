@@ -135,7 +135,4 @@ notation otherwise."
   )
 
 (format t "~&Tests be run anytime with~%
-(test-c3) ; Regression Tests~%
-(c3-props)    ; Test all properties~%
-or test everything~%
-(progn (test-c3) (c3-props))")
+(test-c3) ; Regression Tests")
