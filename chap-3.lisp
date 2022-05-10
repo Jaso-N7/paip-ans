@@ -59,6 +59,19 @@ notation otherwise."
   (dotimes (i parens)
     (princ ")")))
 
+;; 3.5
+
+;; Ref: https://en.wikipedia.org/wiki/Twenty_questions
+;; Any type of thing.
+;; Data structure: Binary Search Tree? Hash Maps?
+;; Should the Data structure be initialized, or allowed to grow from nothing?
+
+;; 3.6
+;; Without testing the code, this is my response.
+;; (local-a local-b global-b local-a local-b) ?
+
+;;; ----------------------------------------------------------------------------
+
 ;;; TESTS
 
 (unless (find-package :ptester)
