@@ -84,6 +84,12 @@ notation otherwise."
 		sequence)
 	counter)))
 
+;; 3.10
+;; LCM :- returns the least common multiple of the integers.
+;; NRECONC :- reverses the order of elements in list (as if by nreverse).
+;;            It then appends (as if by nconc) the tail to that reversed 
+;; list and returns the result.
+
 ;;; ----------------------------------------------------------------------------
 
 ;;; TESTS
