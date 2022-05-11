@@ -90,6 +90,9 @@ notation otherwise."
 ;;            It then appends (as if by nconc) the tail to that reversed 
 ;; list and returns the result.
 
+;; 3.11
+;; ACONS
+
 ;;; ----------------------------------------------------------------------------
 
 ;;; TESTS
