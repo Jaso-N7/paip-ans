@@ -93,6 +93,10 @@ notation otherwise."
 ;; 3.11
 ;; ACONS
 
+;; 3.12 - First attempt
+(format t "~&~{~a ~^~}."
+	'(this completes chapter three))
+
 ;;; ----------------------------------------------------------------------------
 
 ;;; TESTS
